@@ -1,0 +1,27 @@
+{
+  "name": "@purtuga/esm-webpack-plugin",
+  "version": "1.0.0",
+  "description": "A webpack plugin that changes the output to be an ESM library",
+  "main": "esm-webpack-plugin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/purtuga/esm-webpack-plugin.git"
+  },
+  "keywords": [
+    "webpack",
+    "plugin",
+    "esm",
+    "module",
+    "export",
+    "library"
+  ],
+  "author": "Paul Tavares",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/purtuga/esm-webpack-plugin/issues"
+  },
+  "homepage": "https://github.com/purtuga/esm-webpack-plugin#readme"
+}
