@@ -110,6 +110,35 @@ Where `MyLibrary` is the same name as the `output.library` value in your `webpac
 This occurs when your library exports a member that is named the same as the value found in the `output.library` value. It is suggested that you use an obscure value for `output.library` - one that has low probability of matching an exported member's name. 
 
 
+## TypeError: chunk.entryModule.buildMeta.providedExports.reduce is not a function
+
+Console output:
+```
+/home/prj/node_modules/@purtuga/esm-webpack-plugin/esm-webpack-plugin.js:45
+    chunk.entryModule.buildMeta.providedExports.reduce((esm_exports, exportName) => {
+                                                ^
+
+TypeError: chunk.entryModule.buildMeta.providedExports.reduce is not a function
+```
+
+In order to create an ESM package, Webpack must be able to identify your module exports. This error is likey due to the fact that it was not able to do that. You can run your build with `--bail --display-optimization-bailout` to see if the following message is output against your entry module: 
+`ModuleConcatenation bailout: Module exports are unknown`
+
+The root cause is likely due to exporting modules using the `*` syntax. Example:
+
+`index.js`
+```javascript
+export * from "mod1.js";
+```
+
+To address this issue, try using named exports instead:
+
+```javascript
+export {mod1Member} from "mod1.js";
+```
+
+
+
 # License
 
 [MIT](LICENSE)
