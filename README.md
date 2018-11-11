@@ -124,17 +124,19 @@ TypeError: chunk.entryModule.buildMeta.providedExports.reduce is not a function
 In order to create an ESM package, Webpack must be able to identify your module exports. This error is likey due to the fact that it was not able to do that. You can run your build with `--bail --display-optimization-bailout` to see if the following message is output against your entry module: 
 `ModuleConcatenation bailout: Module exports are unknown`
 
-The root cause is likely due to exporting modules using the `*` syntax. Example:
+The root cause is likely due to exporting modules using the `*` syntax where different modules have an export named exactly the same. Example:
 
 `index.js`
 ```javascript
 export * from "mod1.js";
+export * from "mod1.js"
 ```
 
-To address this issue, try using named exports instead:
+Where both modules have an export name `foo`. To address this issue, try using named exports instead:
 
 ```javascript
-export {mod1Member} from "mod1.js";
+export {foo} from "mod1.js";
+export {foo as foo2} from "mod2.js"
 ```
 
 
