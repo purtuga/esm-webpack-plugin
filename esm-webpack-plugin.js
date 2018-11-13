@@ -1,4 +1,5 @@
 const ConcatSource = require("webpack-sources").ConcatSource;
+const MultiModule = require("webpack/lib/MultiModule");
 const PLUGIN_NAME = "EsmWebpackPlugin";
 const warn = msg => console.warn(`[${PLUGIN_NAME}] ${msg}`);
 
@@ -12,6 +13,23 @@ module.exports = class EsmWebpackPlugin {
     }
 };
 
+function exportsForModule(module, libVar) {
+	let exports = "";
+	if (module instanceof MultiModule) {
+		module.dependencies.forEach(dependency => {
+			exports += exportsForModule(dependency.module, libVar);
+		});
+	} else if (Array.isArray(module.buildMeta.providedExports)) {
+		module.buildMeta.providedExports.forEach(exportName => {
+            if (exportName === "default") {
+                exports += `export default ${libVar}['${exportName}'];\n`
+            } else {
+                exports += `export const ${exportName} = ${libVar}['${exportName}'];\n`
+            }
+		});
+	}
+	return exports;
+}
 
 function compilationTap(compilation) {
     const libVar = compilation.outputOptions.library;
@@ -41,15 +59,7 @@ function compilationTap(compilation) {
                     compilation.assets[fileName] = new ConcatSource(
                         compilation.assets[fileName],
                         "\n\n",
-                        // generate the list of exports
-                        chunk.entryModule.buildMeta.providedExports.reduce((esm_exports, exportName) => {
-                            if (exportName === "default") {
-                                esm_exports += `export default ${libVar}['${exportName}'];` + "\n"
-                            } else {
-                                esm_exports += `export const ${exportName} = ${libVar}['${exportName}'];` + "\n"
-                            }
-                            return esm_exports;
-                        }, "")
+                        exportsForModule(chunk.entryModule, libVar)
                     );
                 });
             }
