@@ -1,6 +1,6 @@
 {
   "name": "@purtuga/esm-webpack-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A webpack plugin that changes the output to be an ESM library",
   "main": "esm-webpack-plugin.js",
   "scripts": {
