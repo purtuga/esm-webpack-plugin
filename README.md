@@ -15,7 +15,7 @@ npm i -D @purtuga/esm-webpack-plugin
 In your webpack configuration (`webpack.config.js`):
 
 ```javascript
-const EsmWebpackPlugin = require("esm-webpack-plugin");
+const EsmWebpackPlugin = require("@purtuga/esm-webpack-plugin");
 
 module.exports = {
     mode: "development",
