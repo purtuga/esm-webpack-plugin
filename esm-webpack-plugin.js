@@ -48,7 +48,7 @@ function compilationTap(compilation) {
 
     compilation.hooks.optimizeChunkAssets.tapAsync(PLUGIN_NAME, (chunks, done) => {
         chunks.forEach(chunk => {
-            if (chunk.entryModule.buildMeta.providedExports) {
+            if (chunk.entryModule && chunk.entryModule.buildMeta.providedExports) {
                 if (chunk.files.length > 1) {
                     warn(`Was expecting only 1 file for chunk "${chunk.name}" (found: ${chunk.files.length})!`);
                 }
