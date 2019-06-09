@@ -103,6 +103,13 @@ Or:
 
 # FAQ
 
+## When using the generated ESM library, un-used exports are not removed from final output (not three-shaken)
+
+This is, unfortunately, a drawback and limitation of this plugin. This plugin does not change how the code is bundled or structured by webpack and only adds `export` statements to the end of file in order to enable its use via ES6 `import`. Because of that, tree-shaking is not possible - all code is already bundled and stored using webpack's internal structure. The ability to possibly support tree-shaking can only truly be supported when webpack itself introduces support for generating ESM output targets.
+  
+My advice is to use the generated ESM modules at runtime when no build/bundling pipeline exists on a project and to `import` source directly (if that is coded as ESM) when a pipeline does exists.
+
+
 ## Uncaught SyntaxError: Identifier 'MyLibrary' has already been declared
 
 Where `MyLibrary` is the same name as the `output.library` value in your `webpack.config.js` file. 
@@ -121,7 +128,7 @@ Console output:
 TypeError: chunk.entryModule.buildMeta.providedExports.reduce is not a function
 ```
 
-In order to create an ESM package, Webpack must be able to identify your module exports. This error is likey due to the fact that it was not able to do that. You can run your build with `--bail --display-optimization-bailout` to see if the following message is output against your entry module: 
+In order to create an ESM package, webpack must be able to identify your module exports. This error is likey due to the fact that it was not able to do that. You can run your build with `--bail --display-optimization-bailout` to see if the following message is output against your entry module: 
 `ModuleConcatenation bailout: Module exports are unknown`
 
 The root cause is likely due to exporting modules using the `*` syntax where different modules have an export named exactly the same. Example:
