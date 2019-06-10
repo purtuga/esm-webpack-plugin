@@ -36,6 +36,36 @@ Note the use of `output.library` and `output.libraryTarget`, which indicates a l
 >   __NOTE__: the value for `output.library` should NOT match the name of an exported library member.
  
 
+## Options
+
+Options are supported by providing an object to the Plugin constructor. Example:
+
+```javascript
+const EsmWebpackPlugin = require("@purtuga/esm-webpack-plugin");
+
+module.exports = {
+    //...
+    plugins: [
+        new EsmWebpackPlugin({
+            /*...*/
+        })
+    ]
+}
+```
+
+Supported options:
+
+-   `{Function} exclude`: A callback function that will be used to determine if a given file name should be excluded from processing. By default, all files whose file extension does not end with `.js` or `.mjs` will be excluded (meaning: no ESM `export` statements will be added to the output file).
+    Function callback will receive two arguments - the `fileName` that is being process and webpack's `chunk` object that contains that file name.
+    
+        {
+            exclude(fileName, chunck) {
+                // exclude if not a .js/.mjs file
+                return !/\.m?js/i.test(fileName);
+            }
+        }
+
+
 ## Example
 
 Given the above Usage example:
