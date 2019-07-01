@@ -23,5 +23,11 @@
   "bugs": {
     "url": "https://github.com/purtuga/esm-webpack-plugin/issues"
   },
-  "homepage": "https://github.com/purtuga/esm-webpack-plugin#readme"
+  "homepage": "https://github.com/purtuga/esm-webpack-plugin#readme",
+  "peerDependencies": {
+    "webpack": ">= 4.0.0"
+  },
+  "dependencies": {
+    "webpack-sources": "^1.0.0"
+  }
 }
