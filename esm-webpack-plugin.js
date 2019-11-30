@@ -2,7 +2,7 @@ const ConcatSource = require("webpack-sources").ConcatSource;
 const MultiModule = require("webpack/lib/MultiModule");
 const PLUGIN_NAME = "EsmWebpackPlugin";
 const warn = msg => console.warn(`[${PLUGIN_NAME}] ${msg}`);
-const IS_JS_FILE = /\.m?js$/i;
+const IS_JS_FILE = /\.[cm]?js$/i;
 const nonJsFiles = fileName => !IS_JS_FILE.test(fileName);
 
 /**
