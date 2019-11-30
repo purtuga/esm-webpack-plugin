@@ -44,7 +44,9 @@ function exportsForModule(module, libVar) {
                 exports += `export const ${exportName} = ${libVar}['${exportName}'];\n`
             }
 		});
-	}
+	} else {
+        exports += `export default ${libVar};\n`
+    }
 	return exports;
 }
 
