@@ -31,23 +31,23 @@ module.exports = class EsmWebpackPlugin {
 };
 
 function exportsForModule(module, libVar) {
-	let exports = "";
-	if (module instanceof MultiModule) {
-		module.dependencies.forEach(dependency => {
-			exports += exportsForModule(dependency.module, libVar);
-		});
-	} else if (Array.isArray(module.buildMeta.providedExports)) {
-		module.buildMeta.providedExports.forEach(exportName => {
+    let exports = "";
+    if (module instanceof MultiModule) {
+        module.dependencies.forEach(dependency => {
+            exports += exportsForModule(dependency.module, libVar);
+        });
+    } else if (Array.isArray(module.buildMeta.providedExports)) {
+        module.buildMeta.providedExports.forEach(exportName => {
             if (exportName === "default") {
                 exports += `export default ${libVar}['${exportName}'];\n`
             } else {
                 exports += `export const ${exportName} = ${libVar}['${exportName}'];\n`
             }
-		});
-	} else {
-        exports += `export default ${libVar};\n`
+        });
+    } else {
+        exports += `export default ${libVar};\nexport { ${libVar} };\n`
     }
-	return exports;
+    return exports;
 }
 
 function compilationTap(compilation) {
