@@ -61,7 +61,7 @@ Supported options:
         {
             exclude(fileName, chunck) {
                 // exclude if not a .js/.mjs file
-                return !/\.m?js/i.test(fileName);
+                return !/\.[cm]?js/i.test(fileName);
             }
         }
 
