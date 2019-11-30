@@ -18,7 +18,7 @@ In your webpack configuration (`webpack.config.js`):
 const EsmWebpackPlugin = require("@purtuga/esm-webpack-plugin");
 
 module.exports = {
-    mode: "development",
+    mode: "production",
     entry: "index.js",
     output: {
         library: "LIB",
@@ -31,10 +31,11 @@ module.exports = {
 }
 ```
 
-Note the use of `output.library` and `output.libraryTarget`, which indicates a library is being built and the bundle will expose it via a scoped variable named `LIB`.
+Notice the use of `output.library` and `output.libraryTarget`, which indicates a library is being built and the bundle will expose it via a scoped variable named `LIB`.
 
 >   __NOTE__: the value for `output.library` should NOT match the name of an exported library member.
- 
+
+>   If using this plugin on a CommonJS source project, see the FAQ below for more information. 
 
 ## Options
 
@@ -47,20 +48,20 @@ module.exports = {
     //...
     plugins: [
         new EsmWebpackPlugin({
-            /*...*/
+            /*... Plugin Options here ...*/
         })
     ]
 }
 ```
 
-Supported options:
+### Supported options:
 
 -   `{Function} exclude`: A callback function that will be used to determine if a given file name should be excluded from processing. By default, all files whose file extension does not end with `.js` or `.mjs` will be excluded (meaning: no ESM `export` statements will be added to the output file).
     Function callback will receive two arguments - the `fileName` that is being process and webpack's `chunk` object that contains that file name.
     
         {
             exclude(fileName, chunck) {
-                // exclude if not a .js/.mjs file
+                // exclude if not a .js/.mjs/.cjs file
                 return !/\.[cm]?js/i.test(fileName);
             }
         }
@@ -74,7 +75,6 @@ Given the above Usage example:
 
 ```javascript
 import {horn} from "lib/noises"
-
 export {bark} from "lib/noises"
 
 export function makeHornNoise() {
@@ -138,6 +138,33 @@ Or:
 This is, unfortunately, a drawback and limitation of this plugin. This plugin does not change how the code is bundled or structured by webpack and only adds `export` statements to the end of file in order to enable its use via ES6 `import`. Because of that, tree-shaking is not possible - all code is already bundled and stored using webpack's internal structure. The ability to possibly support tree-shaking can only truly be supported when webpack itself introduces support for generating ESM output targets.
   
 My advice is to use the generated ESM modules at runtime when no build/bundling pipeline exists on a project and to `import` source directly (if that is coded as ESM) when a pipeline does exists.
+
+
+## With CommonJS project, individual `exports` are not available in the output ESM module
+This project was created primarily for use in sources that are developed using ESM. The default behavior, if the plugin is unable to identify explicit `export`'s is to expose the entire library object (the `LIB` variable as seen in the examples above). A workaround that might work is to create an `ESM` entry source file whose sole purpose is to expose the desired members and use that as your webpack `entry` file.  Here is an example:
+
+File `/index.cjs`:
+```javascript
+exports.libA = require("./lib-a.cjs").libA;
+exports.cjsIndex = function cjsIndex() {
+    console.log("src-cjs/index.cjs loaded!");
+}
+```
+
+File `/index.mjs` (use this with webpack):
+```javascript
+import * as cjs from "./index.cjs";
+
+const { libA, cjsIndex } = cjs;
+
+export default cjs;
+export {
+    libA,
+    cjsIndex
+};
+```
+
+Note that in order for this work, I believe (have not confirmed) that webpack's mode needs to be  `javascript/auto` which I think is currently the default.
 
 
 ## Uncaught SyntaxError: Identifier 'MyLibrary' has already been declared
