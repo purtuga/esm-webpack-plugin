@@ -32,6 +32,8 @@ module.exports = class EsmWebpackPlugin {
 
 function exportsForModule(module, libVar) {
     let exports = "";
+    let namedExports = [];
+
     if (module instanceof MultiModule) {
         module.dependencies.forEach(dependency => {
             exports += exportsForModule(dependency.module, libVar);
@@ -41,13 +43,20 @@ function exportsForModule(module, libVar) {
             if (exportName === "default") {
                 exports += `export default ${libVar}['${exportName}'];\n`
             } else {
-                exports += `export const ${exportName} = ${libVar}['${exportName}'];\n`
+                const scopedExportVarName = `_${libVar}$${exportName}`;
+                exports += `const ${scopedExportVarName} = ${libVar}['${exportName}'];\n`;
+                namedExports.push(`    ${scopedExportVarName} as ${exportName}`);
             }
         });
     } else {
         exports += `export default ${libVar};\nexport { ${libVar} };\n`
     }
-    return exports;
+    return `
+${exports}${
+        namedExports.length ?
+            `\nexport {\n${namedExports.join(",\n")}\n}` :
+            ""
+    }`;
 }
 
 function compilationTap(compilation) {
