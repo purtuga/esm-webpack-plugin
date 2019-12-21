@@ -10,6 +10,16 @@ describe("esm-webpack-plugin", () => {
         assert.ok("fixtures compile");
     });
 
+    it("should export ESM modules", async () => {
+        // https://github.com/purtuga/esm-webpack-plugin/issues/9
+        const buildResults = await build;
+        const module = await buildResults.esm_module.import();
+        assert.ok(module.default);
+        assert.ok(module.getStaticOne);
+        assert.ok(module.STATIC_ONE);
+        assert.ok(module.default === module.fnDefault);
+    });
+
     it("should handle code splitting", async () => {
         // https://github.com/purtuga/esm-webpack-plugin/issues/4
         const buildResults = await build;
