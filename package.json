@@ -4,7 +4,8 @@
   "description": "A webpack plugin that changes the output to be an ESM library",
   "main": "esm-webpack-plugin.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "preversion": "npm run test",
+    "test": "mocha -r esm test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -29,5 +30,11 @@
   },
   "dependencies": {
     "webpack-sources": "^1.0.0"
+  },
+  "devDependencies": {
+    "esm": "^3.2.25",
+    "mocha": "^6.2.2",
+    "webpack": "^4.41.4",
+    "webpack-cli": "^3.3.10"
   }
 }

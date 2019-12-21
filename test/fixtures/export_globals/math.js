@@ -1,0 +1,1 @@
+export const square = x => Math.pow(x, 2);
