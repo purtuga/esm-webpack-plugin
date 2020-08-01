@@ -52,6 +52,7 @@ function exportsForModule(module, libVar) {
         exports += `export default ${libVar};\nexport { ${libVar} };\n`
     }
     return `
+${libVar} === undefined && ${exports.length > 0 && namedExports.length > 0} && console.error('esm-webpack-plugin: nothing exported!');
 ${exports}${
         namedExports.length ?
             `\nexport {\n${namedExports.join(",\n")}\n}` :
