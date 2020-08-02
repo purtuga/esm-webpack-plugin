@@ -39,7 +39,7 @@ Notice the use of `output.library` and `output.libraryTarget`, which indicates a
 
 ## Options
 
-Options are supported by providing an object to the Plugin constructor. Example:
+Options are supported by providing an object to the Plugin constructor. All are optional. Example:
 
 ```javascript
 const EsmWebpackPlugin = require("@purtuga/esm-webpack-plugin");
@@ -56,15 +56,33 @@ module.exports = {
 
 ### Supported options:
 
--   `{Function} exclude`: A callback function that will be used to determine if a given file name should be excluded from processing. By default, all files whose file extension does not end with `.js` or `.mjs` will be excluded (meaning: no ESM `export` statements will be added to the output file).
+-   `exclude {Function}`: A callback function that will be used to determine if a given file name (a named output file) should be excluded from processing. By default, all files whose file extension does **not** end with `.js` or `.mjs` will be excluded (meaning: no ESM `export` statements will be added to the output file). Note that callback is applied to the named output chunks that webpack outputs.
     Function callback will receive two arguments - the `fileName` that is being process and webpack's `chunk` object that contains that file name.
-    
-        {
-            exclude(fileName, chunck) {
-                // exclude if not a .js/.mjs/.cjs file
-                return !/\.[cm]?js/i.test(fileName);
-            }
-        }
+```javascript
+new EsmWebpackPlugin({
+exclude(fileName, chunk) {
+    // exclude if not a .js/.mjs/.cjs file
+    return !/\.[cm]?js/i.test(fileName);
+}
+})
+```
+
+- `skipModule {Function}`: A callback function that can be used to skip over certain modules whose exports should not be included. Useful for when certain development plugins from webpack are used (like the `devServer`). The callback is provided with two arguments - the file name for the given module and the Webpack module class instance. 
+Example - don't include webpack devServer generated bundles and modules:
+```javascript
+new EsmWebpackPlugin({
+    exclude(fileName) {
+        // Exclude if:
+        //  a. not a js file
+        //  b. is a devServer.hot file
+        return !/\.[cm]?js$/i.test(fileName) ||
+            /\.hot-update\.js$/i.test(fileName);
+    },
+    skipModule(fileName, module) {
+        return /[\\\/]webpack(-dev-server)?[\\\/]/.test(moduleName);
+    }
+})
+```
 
 
 ## Example
