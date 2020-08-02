@@ -3,8 +3,15 @@ const MultiModule = require("webpack/lib/MultiModule");
 const PLUGIN_NAME = "EsmWebpackPlugin";
 const warn = msg => console.warn(`[${PLUGIN_NAME}] ${msg}`);
 const IS_JS_FILE = /\.[cm]?js$/i;
-const nonJsFiles = fileName => !IS_JS_FILE.test(fileName);
-const skipNone = () => false;
+
+const defaultOptions = {
+    // Exclude non-js files
+    exclude: fileName => !IS_JS_FILE.test(fileName),
+
+    // Skip Nothing
+    skipModule: () => false
+};
+
 
 /**
  * Add ESM `export` statements to the bottom of a webpack chunk
@@ -25,8 +32,11 @@ module.exports = class EsmWebpackPlugin {
      *  A callback function to evaluate each single module in the bundle and if its list of
      *  exported members should be included.
      */
-    constructor(options = { exclude: nonJsFiles, skipModule: skipNone }) {
-        this._options = options;
+    constructor(options) {
+        this._options = {
+            ...defaultOptions,
+            ...options
+        };
     }
 
     apply(compiler) {
