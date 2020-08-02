@@ -2,7 +2,7 @@ import {describe, it} from "mocha";
 import assert from "assert";
 import {buildFixtures} from "./utils.js";
 
-describe("esm-webpack-plugin", () => {
+describe("When esm-webpack-plugin is invoked", () => {
     const build = buildFixtures();
 
     it("should build fixtures", async () => {
@@ -46,5 +46,12 @@ describe("esm-webpack-plugin", () => {
         const module = await buildResults.export_globals.import();
         assert.ok(module.Math);
         assert.equal(module.Math.square(2), 4);
+    });
+
+    it("should support skipModule option", async () => {
+        const buildResults = await build;
+        const module = await buildResults.multi_module_entry.import();
+        assert.ok(module.includeFn);
+        assert.ok(module.default);
     });
 });

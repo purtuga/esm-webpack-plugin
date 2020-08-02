@@ -4,6 +4,7 @@ const PLUGIN_NAME = "EsmWebpackPlugin";
 const warn = msg => console.warn(`[${PLUGIN_NAME}] ${msg}`);
 const IS_JS_FILE = /\.[cm]?js$/i;
 const nonJsFiles = fileName => !IS_JS_FILE.test(fileName);
+const skipNone = () => false;
 
 /**
  * Add ESM `export` statements to the bottom of a webpack chunk
@@ -20,8 +21,11 @@ module.exports = class EsmWebpackPlugin {
      *  The provided callback will receive two input arguments:
      *  -   `{String} fileName`: the file name being evaluated
      *  -   `{Chunk} chunk`: the webpack `chunk` being worked on.
+     * @param {Function} [options.skipModule]
+     *  A callback function to evaluate each single module in the bundle and if its list of
+     *  exported members should be included.
      */
-    constructor(options = { exclude: nonJsFiles }) {
+    constructor(options = { exclude: nonJsFiles, skipModule: skipNone }) {
         this._options = options;
     }
 
@@ -30,13 +34,20 @@ module.exports = class EsmWebpackPlugin {
     }
 };
 
-function exportsForModule(module, libVar) {
+function exportsForModule(module, libVar, pluginOptions) {
     let exports = "";
-    let namedExports = [];
+    const namedExports = [];
+    const moduleName = typeof module.nameForCondition === 'function'
+        ? module.nameForCondition()
+        : undefined;
+
+    if (moduleName && pluginOptions.skipModule(moduleName, module)) {
+        return '';
+    }
 
     if (module instanceof MultiModule) {
         module.dependencies.forEach(dependency => {
-            exports += exportsForModule(dependency.module, libVar);
+            exports += exportsForModule(dependency.module, libVar, pluginOptions);
         });
     } else if (Array.isArray(module.buildMeta.providedExports)) {
         module.buildMeta.providedExports.forEach(exportName => {
@@ -52,7 +63,11 @@ function exportsForModule(module, libVar) {
         exports += `export default ${libVar};\nexport { ${libVar} };\n`
     }
     return `
-${libVar} === undefined && ${exports.length > 0 && namedExports.length > 0} && console.error('esm-webpack-plugin: nothing exported!');
+${
+        exports.length > 0 && namedExports.length > 0
+            ? `${libVar} === undefined && console.error('esm-webpack-plugin: nothing exported!');`
+            : ''
+}
 ${exports}${
         namedExports.length ?
             `\nexport {\n${namedExports.join(",\n")}\n}` :
@@ -89,7 +104,7 @@ function compilationTap(compilation) {
                     compilation.assets[fileName] = new ConcatSource(
                         compilation.assets[fileName],
                         "\n\n",
-                        exportsForModule(chunk.entryModule, libVar)
+                        exportsForModule(chunk.entryModule, libVar, this._options)
                     );
                 });
             }

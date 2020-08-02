@@ -22,7 +22,12 @@ async function getWebpackConfigs() {
 }
 
 function b() {
-    return Promise.resolve({ a: {import(){}, results: {}} });
+    return Promise.resolve({
+        a: {
+            import() {
+            }, results: {}
+        }
+    });
 }
 
 /**
@@ -39,7 +44,7 @@ async function buildFixtures() {
         }
     });
     return webpackConfig.reduce((fixtures, config, i) => {
-        fixtures[path.basename(path.dirname(config.entry))] = {
+        fixtures[path.basename(path.dirname(Array.isArray(config.entry) ? config.entry[0] : config.entry))] = {
             import: () => import(path.join(config.output.path, config.output.filename)),
             result: results.stats[i]
         };
@@ -65,7 +70,7 @@ function createSingleWebpackConfig(entryFilePath, outputFilename) {
         ],
         optimization: {
             minimize: false,
-            splitChunks: { chunks: 'all' }
+            splitChunks: {chunks: 'all'}
         }
     };
 }
