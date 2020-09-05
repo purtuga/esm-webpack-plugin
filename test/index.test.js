@@ -62,5 +62,7 @@ describe("When esm-webpack-plugin is invoked", () => {
         const barExternal = await import('./fixtures/externals/bar-external.js');
         assert.strictEqual(module.externals.foo, fooExternal)
         assert.strictEqual(module.externals.bar, barExternal)
+        assert.ok(module.externals.foo.__esModule);
+        assert.ok(module.externals.bar.__esModule);
     })
 });

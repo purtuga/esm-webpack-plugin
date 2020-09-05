@@ -92,7 +92,7 @@ function importsForModule(chunk) {
         const request = typeof m.request === 'object' ? m.request.amd : m.request;
         const identifier = `__WEBPACK_EXTERNAL_MODULE_${Template.toIdentifier(`${m.id}`)}__`;
 
-        return `import * as ${identifier} from '${request}';`
+        return `import * as ${identifier} from '${request}';\nObject.defineProperty(${identifier}, '__esModule', { value: true });`
     })
     return importStatements.join('\n');
 }
