@@ -64,5 +64,5 @@ describe("When esm-webpack-plugin is invoked", () => {
         assert.strictEqual(module.externals.bar, barExternal)
         assert.ok(module.externals.foo.__esModule);
         assert.ok(module.externals.bar.__esModule);
-    })
+    });
 });
