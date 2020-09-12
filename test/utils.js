@@ -52,7 +52,7 @@ async function buildFixtures() {
     }, {});
 }
 
-function createSingleWebpackConfig(entryFilePath, outputFilename) {
+function createSingleWebpackConfig(entryFilePath, outputFilename, pluginOptions = {}) {
     assert.equal(typeof entryFilePath, "string");
     assert.equal(typeof outputFilename, "string");
 
@@ -66,7 +66,7 @@ function createSingleWebpackConfig(entryFilePath, outputFilename) {
             path: fixturesBuildOutputDir
         },
         plugins: [
-            new EsmWebpackPlugin()
+            new EsmWebpackPlugin(pluginOptions)
         ],
         optimization: {
             minimize: false,

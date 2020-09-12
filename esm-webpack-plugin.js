@@ -10,7 +10,10 @@ const defaultOptions = {
     exclude: fileName => !IS_JS_FILE.test(fileName),
 
     // Skip Nothing
-    skipModule: () => false
+    skipModule: () => false,
+
+    // Treat externals as globals, by default
+    moduleExternals: false
 };
 
 
@@ -32,6 +35,9 @@ module.exports = class EsmWebpackPlugin {
      * @param {Function} [options.skipModule]
      *  A callback function to evaluate each single module in the bundle and if its list of
      *  exported members should be included.
+     * @param {boolean} [options.moduleExternals]
+     * A boolean that determines whether to treat webpack externals as ES modules or not.
+     * Defaults to false.
      */
     constructor(options) {
         this._options = {
@@ -86,15 +92,20 @@ ${exports}${
     }`;
 }
 
-function importsForModule(chunk) {
-    const externals = chunk.getModules().filter(m => m.external);
-    const importStatements = externals.map(m => {
-        const request = typeof m.request === 'object' ? m.request.amd : m.request;
-        const identifier = `__WEBPACK_EXTERNAL_MODULE_${Template.toIdentifier(`${m.id}`)}__`;
+function importsForModule(chunk, pluginOptions) {
+    if (pluginOptions.moduleExternals) {
+        const externals = chunk.getModules().filter(m => m.external);
+        const importStatements = externals.map(m => {
+            const request = typeof m.request === 'object' ? m.request.amd : m.request;
+            const identifier = `__WEBPACK_EXTERNAL_MODULE_${Template.toIdentifier(`${m.id}`)}__`;
 
-        return `import * as ${identifier} from '${request}';`
-    })
-    return importStatements.join('\n');
+            return `import * as ${identifier} from '${request}';`
+        })
+        return [importStatements.join('\n'), "\n\n"];
+    } else {
+        // Use default webpack behavior
+        return []
+    }
 }
 
 function compilationTap(compilation) {
@@ -113,14 +124,16 @@ function compilationTap(compilation) {
         warn(`output.libraryTarget (${compilation.outputOptions.libraryTarget}) expected to be 'var' or 'assign'!`);
     }
 
-    compilation.hooks.buildModule.tap(PLUGIN_NAME, (module) => {
-        if (module.external) {
-            // See https://webpack.js.org/configuration/externals/#externalstype
-            // We want AMD because it references __WEBPACK_EXTERNAL_MODULE_ instead
-            // of the raw external request string.
-            module.externalType = 'amd';
-        }
-    });
+    if (this._options.moduleExternals) {
+        compilation.hooks.buildModule.tap(PLUGIN_NAME, (module) => {
+            if (module.external) {
+                // See https://webpack.js.org/configuration/externals/#externalstype
+                // We want AMD because it references __WEBPACK_EXTERNAL_MODULE_ instead
+                // of the raw external request string.
+                module.externalType = 'amd';
+            }
+        });
+    }
 
     compilation.hooks.optimizeChunkAssets.tapAsync(PLUGIN_NAME, (chunks, done) => {
         chunks.forEach(chunk => {
@@ -133,8 +146,7 @@ function compilationTap(compilation) {
                     // Add the exports to the bottom of the file (expecting only one file) and
                     // add that file back to the compilation
                     compilation.assets[fileName] = new ConcatSource(
-                        importsForModule(chunk),
-                        "\n\n",
+                        ...importsForModule(chunk, this._options),
                         compilation.assets[fileName],
                         "\n\n",
                         exportsForModule(chunk.entryModule, libVar, this._options)
