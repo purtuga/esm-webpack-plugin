@@ -71,5 +71,7 @@ describe("When esm-webpack-plugin is invoked", () => {
         const module = await buildResults.global_externals.import();
         assert.strictEqual(module.externals.foo, "foo value");
         assert.strictEqual(module.externals.bar, "bar value");
+        delete global.globalFoo;
+        delete global.globalBar;
     });
 });

@@ -9,7 +9,7 @@ const config = createSingleWebpackConfig(
     }
 );
 
-// Set some externals, which will be loaded via `import` at runtime.
+// Set some externals, which will be referenced as global variables
 config.externals = {
   foo: 'globalFoo',
   bar: 'globalBar',
