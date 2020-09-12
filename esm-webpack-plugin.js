@@ -104,7 +104,7 @@ function importsForModule(chunk, pluginOptions) {
         return [importStatements.join('\n'), "\n\n"];
     } else {
         // Use default webpack behavior
-        return []
+        return [];
     }
 }
 
