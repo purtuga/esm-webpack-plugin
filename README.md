@@ -84,6 +84,7 @@ new EsmWebpackPlugin({
 })
 ```
 
+- `moduleExternals {boolean}`: A boolean that determines whether [webpack externals](https://webpack.js.org/configuration/externals/#root) should be imported as ES modules or not. Defaults to false.
 
 ## Example
 
