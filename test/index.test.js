@@ -54,4 +54,24 @@ describe("When esm-webpack-plugin is invoked", () => {
         assert.ok(module.includeFn);
         assert.ok(module.default);
     });
+
+    it("should import esm externals", async () => {
+        const buildResults = await build;
+        const module = await buildResults.esm_externals.import();
+        const fooExternal = await import('./fixtures/esm_externals/foo-external.js');
+        const barExternal = await import('./fixtures/esm_externals/bar-external.js');
+        assert.strictEqual(module.externals.foo, fooExternal)
+        assert.strictEqual(module.externals.bar, barExternal)
+    });
+
+    it("should import global externals", async () => {
+        const buildResults = await build;
+        global.globalFoo = "foo value";
+        global.globalBar = "bar value";
+        const module = await buildResults.global_externals.import();
+        assert.strictEqual(module.externals.foo, "foo value");
+        assert.strictEqual(module.externals.bar, "bar value");
+        delete global.globalFoo;
+        delete global.globalBar;
+    });
 });
