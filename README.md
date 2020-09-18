@@ -60,10 +60,10 @@ module.exports = {
     Function callback will receive two arguments - the `fileName` that is being process and webpack's `chunk` object that contains that file name.
 ```javascript
 new EsmWebpackPlugin({
-exclude(fileName, chunk) {
-    // exclude if not a .js/.mjs/.cjs file
-    return !/\.[cm]?js/i.test(fileName);
-}
+    exclude(fileName, chunk) {
+        // exclude if not a .js/.mjs/.cjs file
+        return !/\.[cm]?js/i.test(fileName);
+    }
 })
 ```
 
@@ -84,7 +84,42 @@ new EsmWebpackPlugin({
 })
 ```
 
-- `moduleExternals {boolean}`: A boolean that determines whether [webpack externals](https://webpack.js.org/configuration/externals/#root) should be imported as ES modules or not. Defaults to false.
+- `moduleExternals {boolean}`: A boolean that determines whether [webpack externals](https://webpack.js.org/configuration/externals/#root) should be imported as ES modules or not. Defaults to `false`.
+When set to true, the defined webpack `externals` will be added to the output ES module as `import`'s. Example: Given the following code module
+```javascript
+import foo from 'foo-mod'
+
+export const doFoo = () => foo();
+```
+with a webpack configuration containing the following:
+```javascript
+const EsmWebpackPlugin = require("@purtuga/esm-webpack-plugin");
+
+module.exports = {
+    //...
+    externals: {
+        'foo-mod': '/some/external/location/foo-mod.js'
+    },
+    plugins: [
+        new EsmWebpackPlugin({
+            /*... Plugin Options here ...*/
+        })
+    ]
+}
+```
+would generate an ESM with the following `import`:
+```javascript
+import * as __WEBPACK_EXTERNAL_MODULE__0__ from '/some/external/location/foo-mod.js';
+
+var LIB =
+/******/ (function(modules) { // webpackBootstrap
+//...
+})();
+//...
+export {
+    _LIB$doFoo as doFoo
+}
+```
 
 ## Example
 
