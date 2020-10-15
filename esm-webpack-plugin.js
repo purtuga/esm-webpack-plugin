@@ -123,6 +123,20 @@ function importsForModule(chunk, pluginOptions) {
                 configurable: false,
               });
             }
+
+            if (ns.default) {
+                const namedExportNames = Object.getOwnPropertyNames(ns.default);
+                for (let i = 0; i < namedExportNames.length; i++) {
+                    const propertyName = namedExportNames[i];
+                    Object.defineProperty(result, propertyName, {
+                        get: function () {
+                            return ns.default[propertyName];
+                        },
+                        enumerable: true,
+                        configurable: false,
+                    });
+                }
+            }
           
             if (Object.getOwnPropertySymbols) {
               const symbols = Object.getOwnPropertySymbols(ns);
