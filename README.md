@@ -4,6 +4,9 @@ Output an ESM library from your bundle. Adds `export` statements to the end of t
 
 Currently only for webpack 4 and above.
 
+
+> **IMPORTANT** : [Webpack 5](https://webpack.js.org/blog/2020-10-10-webpack-5-release/) has been released and with it comes support for output ES Modules. [See documentation here](https://webpack.js.org/blog/2020-10-10-webpack-5-release/). **There is currently no plan to udpate this plugin to support Webpack 5** and those looking to upgrade should instead migrate to use the new features of Webpack 5. 
+
 ## Install
 
 ```bash
