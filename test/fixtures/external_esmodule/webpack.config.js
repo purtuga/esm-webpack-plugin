@@ -6,7 +6,7 @@ const config = createSingleWebpackConfig(
     "external_esmodule.js",
     {
       moduleExternals: true,
-      esModuleExternals: false
+      esModuleExternals: true
     }
 );
 
