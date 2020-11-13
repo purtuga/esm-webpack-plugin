@@ -4,7 +4,6 @@ import {buildFixtures} from "./utils.js";
 
 describe("When esm-webpack-plugin is invoked", () => {
     const build = buildFixtures();
-    // global.window = {};
 
     it("should build fixtures", async () => {
         await build;
