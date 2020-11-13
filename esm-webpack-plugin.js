@@ -107,7 +107,7 @@ function importsForModule(chunk, pluginOptions) {
                 : `import * as ${identifier} from '${request}';`
         })
 
-        const result = [importStatements.join("\n")]
+        const result = [importStatements.join("\n")];
 
         if (pluginOptions.esModuleExternals) {
             // The code here was originally copied from https://github.com/joeldenning/add-esmodule
@@ -171,12 +171,12 @@ function importsForModule(chunk, pluginOptions) {
                     `return result;`,
                 ]),
                 `}`
-            ]))
+            ]));
         }
 
         result.push("\n");
 
-        return result
+        return result;
     } else {
         // Use default webpack behavior
         return [];

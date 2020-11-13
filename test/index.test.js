@@ -58,8 +58,8 @@ describe("When esm-webpack-plugin is invoked", () => {
     it("should import esm externals", async () => {
         const buildResults = await build;
         const module = await buildResults.esm_externals.import();
-        assert.strictEqual(module.externals.foo.default, 'foo external')
-        assert.strictEqual(module.externals.bar.default, 'bar external')
+        assert.strictEqual(module.externals.foo.default, 'foo external');
+        assert.strictEqual(module.externals.bar.default, 'bar external');
     });
 
     it("should import global externals", async () => {
