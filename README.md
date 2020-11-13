@@ -8,7 +8,7 @@ Currently only for webpack 4 and above.
 
 ```bash
 npm i -D @purtuga/esm-webpack-plugin
-``` 
+```
 
 ## Usage
 
@@ -35,7 +35,7 @@ Notice the use of `output.library` and `output.libraryTarget`, which indicates a
 
 >   __NOTE__: the value for `output.library` should NOT match the name of an exported library member.
 
->   If using this plugin on a CommonJS source project, see the FAQ below for more information. 
+>   If using this plugin on a CommonJS source project, see the FAQ below for more information.
 
 ## Options
 
@@ -67,7 +67,7 @@ new EsmWebpackPlugin({
 })
 ```
 
-- `skipModule {Function}`: A callback function that can be used to skip over certain modules whose exports should not be included. Useful for when certain development plugins from webpack are used (like the `devServer`). The callback is provided with two arguments - the file name for the given module and the Webpack module class instance. 
+- `skipModule {Function}`: A callback function that can be used to skip over certain modules whose exports should not be included. Useful for when certain development plugins from webpack are used (like the `devServer`). The callback is provided with two arguments - the file name for the given module and the Webpack module class instance.
 Example - don't include webpack devServer generated bundles and modules:
 ```javascript
 new EsmWebpackPlugin({
@@ -120,6 +120,10 @@ export {
     _LIB$doFoo as doFoo
 }
 ```
+
+- `esModuleExternals {boolean}`: A boolean that determines whether esm-webpack-plugin will add the `__esModule` property to all imported externals. This can be helpful for improving interop between CJS and ESM modules, since webpack treats modules with the `__esModule` property differently than modules without them. Defaults to `true`.
+
+To add the `__esModule` property, esm-webpack-plugin uses a function `cloneWithEsModuleProperty()` which creates a new object that proxies to the original module, since ES modules are not extensible.
 
 ## Example
 
