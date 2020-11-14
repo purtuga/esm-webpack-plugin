@@ -13,6 +13,6 @@ const config = createSingleWebpackConfig(
 config.externals = {
   foo: '../../test/fixtures/esm_externals/foo-external.js',
   bar: '../../test/fixtures/esm_externals/bar-external.js',
-}
+};
 
-export const webpackConfig = config
+export const webpackConfig = config;
