@@ -124,9 +124,9 @@ export {
 }
 ```
 
-- `esModuleExternals {boolean}`: A boolean that determines whether esm-webpack-plugin will add the `__esModule` property to all imported externals. This can be helpful for improving interop between CJS and ESM modules, since webpack treats modules with the `__esModule` property differently than modules without them. Defaults to `true`.
+- `esModuleExternals {boolean}`: This option applies only when `moduleExternals` options is `true` (see above). A boolean that determines whether esm-webpack-plugin will add the `__esModule` property to all imported externals. This can be helpful for improving interop between CJS and ESM modules, since webpack treats modules with the `__esModule` property differently than modules without them. Defaults to `true`.
 
-To add the `__esModule` property, esm-webpack-plugin uses a function `cloneWithEsModuleProperty()` which creates a new object that proxies to the original module, since ES modules are not extensible.
+    To add the `__esModule` property, esm-webpack-plugin uses a function `cloneWithEsModuleProperty()` which creates a new object that proxies to the original module, since ES modules are not extensible.
 
 ## Example
 
