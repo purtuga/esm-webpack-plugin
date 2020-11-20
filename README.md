@@ -2,10 +2,13 @@
 
 Output an ESM library from your bundle. Adds `export` statements to the end of the bundle for the exported members. Ideal for consumption by Javascript environments that support the ESM spec (aka: all major modern browsers).
 
-Currently only for webpack 4 and above.
 
+> **IMPORTANT: This Plugin is currently only supported with Webpack 4.x.**
+> __________
+> The purpose of this plugin was to provide a temporary workaround until support for ESM lands in Webpack, which at one point was targeted for [v5.0](https://webpack.js.org/blog/2020-10-10-webpack-5-release/) but unfortunately it did not land. My current understanding is that the Webapck team will continue to make progress in introducing full support for ESM output bundles at the v5.x level, but unclear what version it will actually land on. At this time, I don't have plans to release a version of this Plugin that supports Webpack v5.0, but if someone wants to contribute the necessary changes to make this compatible with v5.x, I will consider it 🙏 .
+> 
+> __________
 
-> **IMPORTANT** : [Webpack 5](https://webpack.js.org/blog/2020-10-10-webpack-5-release/) has been released and with it comes support for output ES Modules. [See documentation here](https://webpack.js.org/blog/2020-10-10-webpack-5-release/). **There is currently no plan to udpate this plugin to support Webpack 5** and those looking to upgrade should instead migrate to use the new features of Webpack 5. 
 
 ## Install
 
