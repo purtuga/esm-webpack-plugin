@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "esm": "^3.2.25",
-    "mocha": "^6.2.2",
+    "mocha": "^10.2.0",
     "webpack": "^4.41.4",
     "webpack-cli": "^3.3.10"
   }
